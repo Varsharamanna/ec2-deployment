@@ -1,27 +1,28 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: A simple EC2 instance creation template
+name: Deploy EC2 Instance with CloudFormation
 
-Resources:
-  MyEC2Instance:
-    Type: 'AWS::EC2::Instance'
-    Properties:
-      InstanceType: t2.micro  # Change this to your desired EC2 instance type
-      ImageId: ami-0c55b159cbfafe1f0  # Replace with your desired AMI ID (Region-specific)
-      KeyName: Ec2 Creation  # Replace with your EC2 key pair name for SSH access
-      SecurityGroups:
-        - Ref: MySecurityGroup  # Referencing a security group created below
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the main branch
 
-  MySecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupDescription: 'Allow SSH access'
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: 0.0.0.0/0  # Change this to restrict access to a specific IP range
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
 
-Outputs:
-  InstanceId:
-    Description: 'The instance ID of the EC2 instance'
-    Value: !Ref MyEC2Instance
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation create-stack \
+            --stack-name my-ec2-stack \
+            --template-body file://path/to/your/cloudformation-template.yml \
+            --capabilities CAPABILITY_IAM
