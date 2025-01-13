@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: A simple EC2 instance creation template
+
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro  # Change this to your desired EC2 instance type
+      ImageId: ami-0c55b159cbfafe1f0  # Replace with your desired AMI ID (Region-specific)
+      KeyName: my-key-pair  # Replace with your EC2 key pair name for SSH access
+      SecurityGroups:
+        - Ref: MySecurityGroup  # Referencing a security group created below
+
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Allow SSH access'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0  # Change this to restrict access to a specific IP range
+
+Outputs:
+  InstanceId:
+    Description: 'The instance ID of the EC2 instance'
+    Value: !Ref MyEC2Instance
