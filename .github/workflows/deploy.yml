@@ -7,7 +7,7 @@ Resources:
     Properties:
       InstanceType: t2.micro  # Change this to your desired EC2 instance type
       ImageId: ami-0c55b159cbfafe1f0  # Replace with your desired AMI ID (Region-specific)
-      KeyName: my-key-pair  # Replace with your EC2 key pair name for SSH access
+      KeyName: Ec2 Creation  # Replace with your EC2 key pair name for SSH access
       SecurityGroups:
         - Ref: MySecurityGroup  # Referencing a security group created below
 
